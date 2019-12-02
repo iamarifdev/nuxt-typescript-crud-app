@@ -4,11 +4,11 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Customer } from '../models';
+import { ICustomer } from '../models';
 
 @Component
 export default class CustomerComponent extends Vue {
-  @Prop({ type: Object, required: true }) readonly customer!: Customer;
+  @Prop({ type: Object, required: true }) readonly customer!: ICustomer;
 
   message: string = 'This is a message';
 

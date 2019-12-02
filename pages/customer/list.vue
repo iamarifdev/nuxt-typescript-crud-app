@@ -1,12 +1,14 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import Customer from '~/components/CustomerComponent.vue';
+import Customer from '~/components/Customer.vue';
+
+import { ICustomer } from '../../models';
 
 @Component({
   components: { Customer }
 })
 export default class Home extends Vue {
-  customers = [
+  customers: ICustomer[] = [
     { firstName: 'Md. Ariful', lastName: 'Islam' },
     { firstName: 'Shariful', lastName: 'Islam' },
     { firstName: 'Saiful', lastName: 'Islam' },
