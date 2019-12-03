@@ -3,11 +3,19 @@
 </template>
 
 <script lang="ts">
+import "reflect-metadata";
 import { Vue, Component, Prop } from 'vue-property-decorator';
+import { inject, container } from 'inversify-props';
 import { ICustomer } from '../models';
+import { ICustomerService, CustomerService } from '../services';
+
+// container.addSingleton<ICustomerService>(CustomerService);
+
 
 @Component
 export default class CustomerComponent extends Vue {
+  @inject() private customerService!: ICustomerService;
+
   @Prop({ type: Object, required: true }) readonly customer!: ICustomer;
 
   message: string = 'This is a message';
@@ -21,7 +29,10 @@ export default class CustomerComponent extends Vue {
 
   // lifecycle hooks
   created() {}
-  mounted() {}
+  async mounted() {
+    const customers = await this.customerService.getAllCustomer();
+    console.log('Mounted with: ', customers);
+  }
   updated() {}
   destroyed() {}
 }

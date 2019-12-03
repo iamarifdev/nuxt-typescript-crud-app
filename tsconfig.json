@@ -6,6 +6,7 @@
     "lib": ["esnext", "esnext.asynciterable", "dom"],
     "esModuleInterop": true,
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "allowJs": true,
     "sourceMap": true,
     "strict": true,
@@ -15,7 +16,7 @@
       "~/*": ["./*"],
       "@/*": ["./*"]
     },
-    "types": ["@types/node", "@nuxt/types"]
+    "types": ["@types/node", "@nuxt/types", "reflect-metadata"]
   },
   "exclude": ["node_modules"]
 }
