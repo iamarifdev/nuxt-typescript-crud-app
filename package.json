@@ -15,9 +15,11 @@
     "@nuxt/typescript-runtime": "^0.2.7",
     "@nuxtjs/axios": "^5.8.0",
     "axios": "^0.19.0",
+    "axios-observable": "^1.1.2",
     "inversify-props": "^1.4.9",
     "nuxt": "^2.10.2",
     "reflect-metadata": "^0.1.13",
+    "rxjs": "^6.5.3",
     "vue-property-decorator": "^8.3.0"
   },
   "devDependencies": {

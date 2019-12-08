@@ -5,5 +5,5 @@ import { ICustomerService, CustomerService } from '../services';
 
 export default () => {
   container.addSingleton<ICustomerService>(CustomerService);
-  console.log('Module Initiated');
+  console.log('DI Initiated');
 };

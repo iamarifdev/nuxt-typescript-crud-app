@@ -1,19 +1,35 @@
 <script lang="ts">
+import 'reflect-metadata';
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import Customer from '~/components/Customer.vue';
+import CustomerList from '~/components/CustomerList.vue';
+import CustomerAdd from '~/components/CustomerAdd.vue';
 
+import { inject, container } from 'inversify-props';
+import { ICustomerService, CustomerService } from '../../services';
 import { ICustomer } from '../../models';
 
 @Component({
-  components: { Customer }
+  components: {
+    CustomerList,
+    CustomerAdd
+  }
 })
 export default class Home extends Vue {
-  customers: ICustomer[] = [
-    { firstName: 'Md. Ariful', lastName: 'Islam' },
-    { firstName: 'Shariful', lastName: 'Islam' },
-    { firstName: 'Saiful', lastName: 'Islam' },
-    { firstName: 'Abu Bakkar', lastName: 'Siddique' }
-  ];
+  @inject() private customerService!: ICustomerService;
+
+  public dialog: boolean = false;
+  public customers: ICustomer[] = [];
+
+  mounted() {
+    this.customerService.getAllCustomer().subscribe((customers: ICustomer[]) => {
+      this.customers = customers;
+    });
+  }
+
+  public onCustomerAdded(customer: ICustomer): void {
+    this.dialog = false;
+    console.log('customer', customer);
+  }
 }
 </script>
 
@@ -21,7 +37,13 @@ export default class Home extends Vue {
 </style>
 
 <template>
-  <div>
-    <customer v-for="(item, index) in customers" :customer="item" :key="index"></customer>
-  </div>
+  <v-card>
+    <customer-list :customers="customers"></customer-list>
+    <v-card-text>
+      <v-btn fixed dark fab bottom right color="primary" @click="dialog = !dialog">
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
+    </v-card-text>
+    <customer-add :showDialog="dialog" @add="onCustomerAdded"></customer-add>
+  </v-card>
 </template>

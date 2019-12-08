@@ -32,7 +32,7 @@ declare module '@nuxt/vue-app' {
 }
 
 // Nuxt 2.9+
-declare module '@nuxt/types' {
+declare module '@nuxt/types/app' {
   interface Context {
     $axios: NuxtAxiosInstance;
   }

@@ -1,40 +1,33 @@
 <template>
-  <div>{{ message }} for {{ fullName }}</div>
+  <v-list-item @click="handleCustomerClick">
+    <v-list-item-avatar>
+      <v-img :src="customer.avatar || '/avatar.png'"></v-img>
+    </v-list-item-avatar>
+
+    <v-list-item-content>
+      <v-list-item-title v-text="customer.name"></v-list-item-title>
+      <v-list-item-subtitle v-text="customer.balance"></v-list-item-subtitle>
+    </v-list-item-content>
+
+    <v-list-item-action>
+      <v-btn icon>
+        <v-icon color="grey lighten-1">mdi-information</v-icon>
+      </v-btn>
+    </v-list-item-action>
+  </v-list-item>
 </template>
 
 <script lang="ts">
-import "reflect-metadata";
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { inject, container } from 'inversify-props';
 import { ICustomer } from '../models';
-import { ICustomerService, CustomerService } from '../services';
-
-// container.addSingleton<ICustomerService>(CustomerService);
-
 
 @Component
 export default class CustomerComponent extends Vue {
-  @inject() private customerService!: ICustomerService;
-
   @Prop({ type: Object, required: true }) readonly customer!: ICustomer;
 
-  message: string = 'This is a message';
-
-  get fullName(): string {
-    if (this.customer) {
-      return `${this.customer.firstName} ${this.customer.lastName}`;
-    }
-    return '';
+  public handleCustomerClick(): void {
+    console.log('Clicked');
   }
-
-  // lifecycle hooks
-  created() {}
-  async mounted() {
-    const customers = await this.customerService.getAllCustomer();
-    console.log('Mounted with: ', customers);
-  }
-  updated() {}
-  destroyed() {}
 }
 </script>
 

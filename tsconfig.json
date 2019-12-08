@@ -16,7 +16,7 @@
       "~/*": ["./*"],
       "@/*": ["./*"]
     },
-    "types": ["@types/node", "@nuxt/types", "reflect-metadata"]
+    "types": ["@types/node", "@nuxt/types", "@nuxt/vue-app", "reflect-metadata"]
   },
   "exclude": ["node_modules"]
 }
