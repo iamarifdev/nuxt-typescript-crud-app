@@ -1,10 +1,10 @@
 <script lang="ts">
-import 'reflect-metadata';
 import { Vue, Component, Prop } from 'vue-property-decorator';
+import { inject } from 'inversify-props';
+
 import CustomerList from '~/components/CustomerList.vue';
 import CustomerAdd from '~/components/CustomerAdd.vue';
 
-import { inject } from 'inversify-props';
 import { ICustomerService } from '../../services';
 import { ICustomer } from '../../models';
 
@@ -47,7 +47,10 @@ export default class Home extends Vue {
 </style>
 
 <template>
-  <v-card>
+  <v-card outlined>
+    <v-card-title>Customer List</v-card-title>
+    <v-card-subtitle>Customer</v-card-subtitle>
+    <!-- <v-divider vertical class="mx-4" :inset="false"></v-divider> -->
     <customer-list :customers="customers"></customer-list>
     <v-card-text>
       <v-btn fixed dark fab bottom right color="primary" @click="dialog = !dialog">
