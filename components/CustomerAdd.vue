@@ -1,56 +1,96 @@
 <template>
-  <v-dialog v-model="dialog" max-width="400px">
+  <v-dialog v-model="dialog" max-width="350px" @click:outside="close">
     <v-card>
-      <v-form ref="form" v-model="valid" lazy-validation>
-        <v-text-field v-model="name" :counter="10" :rules="nameRules" label="Name" required></v-text-field>
-        <v-text-field v-model="email" :rules="emailRules" label="E-mail" required></v-text-field>
-        <v-text-field v-model="balance" label="Balance" required></v-text-field>
+      <v-card-title>Add new</v-card-title>
+      <v-card-subtitle>Customer</v-card-subtitle>
+      <v-form id="customerAddForm" ref="form" v-model="isFormValid" lazy-validation @submit="add($event)">
+        <v-container>
+          <v-text-field
+            dense
+            outlined
+            v-model="customer.name"
+            :counter="55"
+            :rules="rules.name"
+            label="Customer Name"
+            required
+          >
+          </v-text-field>
+          <v-text-field
+            dense
+            outlined
+            v-model="customer.email"
+            :rules="rules.email"
+            label="E-mail"
+            required
+          ></v-text-field>
+          <v-text-field
+            type="number"
+            dense
+            outlined
+            v-model="customer.balance"
+            :rules="rules.balance"
+            label="Balance"
+            hint="Add a positive value"
+            required
+          ></v-text-field>
+        </v-container>
       </v-form>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text color="primary" @click="add">Submit</v-btn>
+        <v-btn color="red" text @click="close">Close</v-btn>
+        <v-btn type="submit" form="customerAddForm" color="green darken" :disabled="!isFormValid">Submit</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Emit, Model } from 'vue-property-decorator';
+import { Vue, Component, Prop, Emit, Ref, Model } from 'vue-property-decorator';
 import { ICustomer } from '../models';
 
 @Component
 export default class CustomerAddComponent extends Vue {
+  @Ref('form') readonly form!: HTMLFormElement;
   @Prop({ type: Boolean, required: true }) readonly showDialog!: boolean;
 
-  @Model('change', { type: String }) readonly name!: string;
-  @Model('change', { type: String }) readonly email!: string;
-  @Model('change', { type: Number }) readonly balance!: number;
-
-  public nameRules = [
-    (v: any) => !!v || 'Name is required',
-    (v: any) => (v && v.length <= 10) || 'Name must be less than 10 characters'
-  ];
-
-  public emailRules = [
-    (v: any) => !!v || 'E-mail is required',
-    (v: any) => /.+@.+\..+/.test(v) || 'E-mail must be valid'
-  ];
+  public customer = {
+    name: '',
+    email: '',
+    balance: ''
+  };
+  public isFormValid: boolean = false;
+  public rules = {
+    name: [
+      (v: any) => !!v || 'Name is required',
+      (v: any) => (v && v.length <= 55) || 'Name must be less than 10 characters'
+    ],
+    email: [(v: any) => !!v || 'E-mail is required', (v: any) => /.+@.+\..+/.test(v) || 'E-mail must be valid'],
+    balance: [(v: any) => !!v || 'Balance is required', (v: any) => (v && v >= 0) || 'Balance must be postive integer']
+  };
 
   @Emit()
-  public add(): ICustomer {
-    return {
-      _id: '7345934759439534',
-      name: 'Ariful Islam',
-      email: 'abc@gmail.com',
-      balance: 1000
-    };
+  public add(event: any) {
+    event.preventDefault();
+    const form = this.$refs.form as any;
+    let customer = { ...this.customer, balance: Number(this.customer.balance) };
+    if (form.validate()) {
+      this.close();
+      return customer;
+    }
   }
 
   public get dialog(): boolean {
     return this.showDialog;
   }
 
-  mounted() {}
+  public set dialog(value) {}
+
+  @Emit()
+  public close(): boolean {
+    this.form && this.form.reset();
+    this.dialog = false;
+    return true;
+  }
 }
 </script>
 

@@ -1,5 +1,6 @@
 import axios from 'axios-observable';
 
 export const http = axios.create({
-  baseURL: 'http://localhost:3000/api'
+  baseURL: 'http://localhost:3000/api',
+  headers: { 'Content-Type': 'application/json' }
 });

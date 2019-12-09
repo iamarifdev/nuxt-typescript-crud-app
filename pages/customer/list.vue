@@ -4,8 +4,8 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import CustomerList from '~/components/CustomerList.vue';
 import CustomerAdd from '~/components/CustomerAdd.vue';
 
-import { inject, container } from 'inversify-props';
-import { ICustomerService, CustomerService } from '../../services';
+import { inject } from 'inversify-props';
+import { ICustomerService } from '../../services';
 import { ICustomer } from '../../models';
 
 @Component({
@@ -26,9 +26,19 @@ export default class Home extends Vue {
     });
   }
 
-  public onCustomerAdded(customer: ICustomer): void {
+  public onCustomerAdded(customer: any): void {
+    this.closeModal();
+    if (customer) {
+      this.customerService.addNewCustomer(customer).subscribe(savedCustomer => {
+        if (savedCustomer) {
+          this.customers.unshift(savedCustomer);
+        }
+      });
+    }
+  }
+
+  public closeModal(): void {
     this.dialog = false;
-    console.log('customer', customer);
   }
 }
 </script>
@@ -44,6 +54,6 @@ export default class Home extends Vue {
         <v-icon>mdi-plus</v-icon>
       </v-btn>
     </v-card-text>
-    <customer-add :showDialog="dialog" @add="onCustomerAdded"></customer-add>
+    <customer-add :showDialog="dialog" @add="onCustomerAdded" @close="closeModal"></customer-add>
   </v-card>
 </template>

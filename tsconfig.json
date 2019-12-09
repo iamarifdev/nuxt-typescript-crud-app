@@ -9,6 +9,7 @@
     "emitDecoratorMetadata": true,
     "allowJs": true,
     "sourceMap": true,
+    "noImplicitAny": false,
     "strict": true,
     "noEmit": true,
     "baseUrl": ".",
