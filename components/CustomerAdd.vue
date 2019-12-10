@@ -1,9 +1,9 @@
 <template>
   <v-dialog v-model="dialog" max-width="350px" @click:outside="close">
-    <v-card>
+    <v-card :loading="isLoading">
       <v-card-title>Add new</v-card-title>
       <v-card-subtitle>Customer</v-card-subtitle>
-      <v-form id="customerAddForm" ref="form" v-model="isFormValid" lazy-validation @submit="add($event)">
+      <v-form id="customerAddForm" ref="form" v-model="isFormValid" lazy-validation @submit.prevent="add($event)">
         <v-container>
           <v-text-field
             dense
@@ -38,7 +38,9 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="red" text @click="close">Close</v-btn>
-        <v-btn type="submit" form="customerAddForm" color="green darken" :disabled="!isFormValid">Submit</v-btn>
+        <v-btn type="submit" form="customerAddForm" color="green darken" :disabled="!isFormValid || isLoading">
+          Submit
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -46,13 +48,19 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Emit, Ref, Model } from 'vue-property-decorator';
+import { inject } from 'inversify-props';
+
+import { ILoadingService } from '../services';
 import { ICustomer } from '../models';
 
 @Component
 export default class CustomerAddComponent extends Vue {
+  @inject('ILoadingService') private loadingService!: ILoadingService;
+
   @Ref('form') readonly form!: HTMLFormElement;
   @Prop({ type: Boolean, required: true }) readonly showDialog!: boolean;
 
+  public isLoading: boolean = false;
   public customer = {
     name: '',
     email: '',
@@ -68,9 +76,12 @@ export default class CustomerAddComponent extends Vue {
     balance: [(v: any) => !!v || 'Balance is required', (v: any) => (v && v >= 0) || 'Balance must be postive integer']
   };
 
+  public mounted() {
+    this.loadingService.$isLoading.subscribe(loading => (this.isLoading = loading));
+  }
+
   @Emit()
   public add(event: any) {
-    event.preventDefault();
     const form = this.$refs.form as any;
     let customer = { ...this.customer, balance: Number(this.customer.balance) };
     if (form.validate()) {
@@ -88,9 +99,13 @@ export default class CustomerAddComponent extends Vue {
   @Emit()
   public close(): boolean {
     this.form && this.form.reset();
-    this.dialog = false;
+    // this.dialog = false;
     return true;
   }
+
+  // public destroyed() {
+  //   this.loadingService && this.loadingService.finish();
+  // }
 }
 </script>
 

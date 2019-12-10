@@ -1,5 +1,5 @@
 <template>
-  <v-list-item>
+  <v-list-item @click="editCustomer">
     <v-list-item-avatar>
       <v-img :src="customer.avatar || '/avatar.png'"></v-img>
     </v-list-item-avatar>
@@ -10,8 +10,8 @@
     </v-list-item-content>
 
     <v-list-item-action>
-      <v-btn icon @click="editCustomer">
-        <v-icon color="grey lighten-1">mdi-file-edit</v-icon>
+      <v-btn icon @click="removeCustomer">
+        <v-icon color="grey lighten-1">mdi-file-remove</v-icon>
       </v-btn>
     </v-list-item-action>
   </v-list-item>
@@ -27,7 +27,12 @@ export default class CustomerComponent extends Vue {
 
   @Emit('editCustomer')
   public editCustomer(): ICustomer {
-    console.log('customer component: ', this.customer);
+    return this.customer;
+  }
+
+  @Emit('removeCustomer')
+  public removeCustomer(): ICustomer {
+    console.log('remove', this.customer);
     return this.customer;
   }
 }

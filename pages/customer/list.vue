@@ -6,7 +6,7 @@ import CustomerList from '~/components/CustomerList.vue';
 import CustomerAdd from '~/components/CustomerAdd.vue';
 import CustomerEdit from '~/components/CustomerEdit.vue';
 
-import { ICustomerService } from '../../services';
+import { ICustomerService, ILoadingService } from '../../services';
 import { ICustomer } from '../../models';
 
 @Component({
@@ -17,8 +17,10 @@ import { ICustomer } from '../../models';
   }
 })
 export default class Home extends Vue {
-  @inject() private customerService!: ICustomerService;
+  @inject('ILoadingService') private asyncService!: ILoadingService;
+  @inject('ICustomerService') private customerService!: ICustomerService;
 
+  public isLoading: boolean = false;
   public customers: ICustomer[] = [];
   public addDialog: boolean = false;
   public editDialog: boolean = false;
@@ -29,26 +31,44 @@ export default class Home extends Vue {
     email: ''
   };
 
-  mounted() {
+  public mounted(): void {
+    this.asyncService.$isLoading.subscribe(loading => (this.isLoading = loading));
+    this.asyncService.start();
     this.customerService.getAllCustomer().subscribe((customers: ICustomer[]) => {
+      this.asyncService.finish();
+      console.log(this.isLoading);
       this.customers = customers;
     });
   }
 
   public onCustomerAdded(customer: any): void {
-    this.closeModal();
     if (customer) {
+      this.asyncService.start();
       this.customerService.addNewCustomer(customer).subscribe(savedCustomer => {
+        this.asyncService.finish();
         if (savedCustomer) {
           this.customers.unshift(savedCustomer);
         }
+        this.closeModal();
       });
     }
   }
 
-  public onCustomerUpdated(customer: any): void {
-    this.closeModal();
-    // todo
+  public onCustomerUpdated(customer: ICustomer): void {
+    if (customer && customer._id) {
+      this.asyncService.start();
+      const { _id, ...payload } = customer;
+      this.customerService.updateCustomer(payload, _id).subscribe(updatedCustomer => {
+        this.asyncService.finish();
+        this.customers = this.customers.map(item => {
+          if (updatedCustomer && item._id === updatedCustomer._id) {
+            item = updatedCustomer;
+          }
+          return item;
+        });
+        this.closeModal();
+      });
+    }
   }
 
   public closeModal(): void {
@@ -57,9 +77,12 @@ export default class Home extends Vue {
   }
 
   public showCustomerEditDialog(customer: ICustomer): void {
-    console.log('customer page selected: ', customer);
     this.editDialog = true;
     this.editCustomer = customer;
+  }
+
+  public destroyed(): void {
+    this.asyncService && this.asyncService.finish();
   }
 }
 </script>
@@ -71,6 +94,8 @@ export default class Home extends Vue {
     <v-card-title>Customer List</v-card-title>
     <v-card-subtitle>Customer</v-card-subtitle>
     <v-divider :inset="false"></v-divider>
+    <v-skeleton-loader v-if="isLoading" :transition="'scale-transition'" type="list-item-avatar-two-line">
+    </v-skeleton-loader>
     <customer-list :customers="customers" @editCustomer="showCustomerEditDialog"></customer-list>
     <v-card-text>
       <v-btn fixed dark fab bottom right color="green darken-1" @click="addDialog = !addDialog">
@@ -82,7 +107,7 @@ export default class Home extends Vue {
       v-if="editDialog"
       :customer="editCustomer"
       :showDialog="editDialog"
-      @update="onCustomerAdded"
+      @update="onCustomerUpdated"
       @close="closeModal"
     ></customer-edit>
   </v-card>

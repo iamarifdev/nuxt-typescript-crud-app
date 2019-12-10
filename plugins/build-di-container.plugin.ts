@@ -1,9 +1,10 @@
 import 'reflect-metadata';
 import { container } from 'inversify-props';
 
-import { ICustomerService, CustomerService } from '../services';
+import { ICustomerService, CustomerService, ILoadingService, LoadingService } from '../services';
 
 export default () => {
-  container.addSingleton<ICustomerService>(CustomerService);
+  container.addSingleton<ICustomerService>(CustomerService, 'ICustomerService');
+  container.addSingleton<ILoadingService>(LoadingService, 'ILoadingService');
   console.log('DI Initiated');
 };

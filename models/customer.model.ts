@@ -3,4 +3,5 @@ export interface ICustomer {
   name: string;
   email: string;
   balance: number;
+  updatedAt?: number | Date | string;
 }

@@ -3,7 +3,7 @@
     <v-card>
       <v-card-title>Edit Customer</v-card-title>
       <v-card-subtitle>Customer</v-card-subtitle>
-      <v-form id="customerAddForm" ref="form" v-model="isFormValid" lazy-validation @submit="update($event)">
+      <v-form id="customerAddForm" ref="form" v-model="isFormValid" lazy-validation @submit.prevent="update($event)">
         <v-container>
           <input type="hidden" v-model="model._id" />
           <v-text-field
@@ -72,16 +72,19 @@ export default class CustomerEditComponent extends Vue {
   };
 
   public mounted() {
-    console.log('customer edit: ', this.customer);
     const { _id = '', balance = '0', ...rest } = this.customer;
-    this.model = { _id, balance: String(balance), ...rest };
+    this.model = {
+      _id,
+      balance: String(balance),
+      email: rest.email,
+      name: rest.name
+    };
   }
 
   @Emit()
   public update(event: any) {
-    event.preventDefault();
     const form = this.$refs.form as any;
-    let customer = { ...this.customer, balance: Number(this.customer.balance) };
+    let customer = { ...this.model, balance: Number(this.model.balance) };
     if (form.validate()) {
       this.close();
       return customer;
