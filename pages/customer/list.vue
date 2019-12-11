@@ -1,5 +1,5 @@
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import { inject } from 'inversify-props';
 
 import CustomerList from '~/components/CustomerList.vue';
@@ -7,7 +7,7 @@ import CustomerAdd from '~/components/CustomerAdd.vue';
 import CustomerEdit from '~/components/CustomerEdit.vue';
 
 import { ICustomerService, ILoadingService } from '../../services';
-import { ICustomer } from '../../models';
+import { ICustomer, Pagination } from '../../models';
 
 @Component({
   components: {
@@ -20,6 +20,8 @@ export default class Home extends Vue {
   @inject('ILoadingService') private asyncService!: ILoadingService;
   @inject('ICustomerService') private customerService!: ICustomerService;
 
+  public pagination: Pagination;
+  public scrollAtBottom: boolean = false;
   public isLoading: boolean = false;
   public customers: ICustomer[] = [];
   public addDialog: boolean = false;
@@ -31,13 +33,32 @@ export default class Home extends Vue {
     email: ''
   };
 
+  @Watch('scrollAtBottom')
+  onScrollAtBottom(bottom: boolean) {
+    if (bottom) {
+      this.loadPaginatedCustomer();
+    }
+  }
+
+  public created(): void {
+    this.pagination = new Pagination({ pageSize: 10 });
+  }
+
   public mounted(): void {
+    window.addEventListener('scroll', () => {
+      this.scrollAtBottom = this.observeScrolledAtBottom();
+    });
+
     this.asyncService.$isLoading.subscribe(loading => (this.isLoading = loading));
+    this.loadPaginatedCustomer();
+  }
+
+  public loadPaginatedCustomer(): void {
     this.asyncService.start();
-    this.customerService.getAllCustomer().subscribe((customers: ICustomer[]) => {
+    this.pagination.page = ++this.pagination.page;
+    this.customerService.getAllCustomer(this.pagination).subscribe((customers: ICustomer[]) => {
       this.asyncService.finish();
-      console.log(this.isLoading);
-      this.customers = customers;
+      this.customers = this.customers.concat(customers);
     });
   }
 
@@ -71,6 +92,13 @@ export default class Home extends Vue {
     }
   }
 
+  public observeScrolledAtBottom(): boolean {
+    const scrollY = window.scrollY;
+    const { clientHeight, scrollHeight } = document.documentElement;
+    const scrollAtBottom = clientHeight + scrollY >= scrollHeight;
+    return scrollAtBottom || scrollHeight < clientHeight;
+  }
+
   public closeModal(): void {
     this.addDialog = false;
     this.editDialog = false;
@@ -91,9 +119,8 @@ export default class Home extends Vue {
 
 <template>
   <v-card outlined>
-    <v-card-title>Customer List</v-card-title>
-    <v-card-subtitle>Customer</v-card-subtitle>
-    <v-divider :inset="false"></v-divider>
+    <v-card-title class="info white--text">Customer List</v-card-title>
+    <v-card-subtitle class="info white--text">Customer</v-card-subtitle>
     <v-skeleton-loader v-if="isLoading" :transition="'scale-transition'" type="list-item-avatar-two-line">
     </v-skeleton-loader>
     <customer-list :customers="customers" @editCustomer="showCustomerEditDialog"></customer-list>

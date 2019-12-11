@@ -1,51 +1,3 @@
-<template>
-  <v-dialog v-model="dialog" max-width="350px" @click:outside="close">
-    <v-card :loading="isLoading">
-      <v-card-title>Add new</v-card-title>
-      <v-card-subtitle>Customer</v-card-subtitle>
-      <v-form id="customerAddForm" ref="form" v-model="isFormValid" lazy-validation @submit.prevent="add($event)">
-        <v-container>
-          <v-text-field
-            dense
-            outlined
-            v-model="customer.name"
-            :counter="55"
-            :rules="rules.name"
-            label="Customer Name"
-            required
-          >
-          </v-text-field>
-          <v-text-field
-            dense
-            outlined
-            v-model="customer.email"
-            :rules="rules.email"
-            label="E-mail"
-            required
-          ></v-text-field>
-          <v-text-field
-            type="number"
-            dense
-            outlined
-            v-model="customer.balance"
-            :rules="rules.balance"
-            label="Balance"
-            hint="Add a positive value"
-            required
-          ></v-text-field>
-        </v-container>
-      </v-form>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="red" text @click="close">Close</v-btn>
-        <v-btn type="submit" form="customerAddForm" color="green darken" :disabled="!isFormValid || isLoading">
-          Submit
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
-</template>
-
 <script lang="ts">
 import { Vue, Component, Prop, Emit, Ref, Model } from 'vue-property-decorator';
 import { inject } from 'inversify-props';
@@ -110,3 +62,51 @@ export default class CustomerAddComponent extends Vue {
 </script>
 
 <style scoped></style>
+
+<template>
+  <v-dialog v-model="dialog" max-width="350px" @click:outside="close">
+    <v-card :loading="isLoading">
+      <v-card-title class="success white--text">Add new</v-card-title>
+      <v-card-subtitle class="success white--text">Customer</v-card-subtitle>
+      <v-form id="customerAddForm" ref="form" v-model="isFormValid" lazy-validation @submit.prevent="add($event)">
+        <v-container>
+          <v-text-field
+            dense
+            outlined
+            v-model="customer.name"
+            :counter="55"
+            :rules="rules.name"
+            label="Customer Name"
+            required
+          >
+          </v-text-field>
+          <v-text-field
+            dense
+            outlined
+            v-model="customer.email"
+            :rules="rules.email"
+            label="E-mail"
+            required
+          ></v-text-field>
+          <v-text-field
+            type="number"
+            dense
+            outlined
+            v-model="customer.balance"
+            :rules="rules.balance"
+            label="Balance"
+            hint="Add a positive value"
+            required
+          ></v-text-field>
+        </v-container>
+      </v-form>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="red" text @click="close">Close</v-btn>
+        <v-btn type="submit" form="customerAddForm" color="green darken" :disabled="!isFormValid || isLoading">
+          Submit
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+</template>

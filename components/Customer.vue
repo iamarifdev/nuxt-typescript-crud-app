@@ -1,22 +1,3 @@
-<template>
-  <v-list-item @click="editCustomer">
-    <v-list-item-avatar>
-      <v-img :src="customer.avatar || '/avatar.png'"></v-img>
-    </v-list-item-avatar>
-
-    <v-list-item-content>
-      <v-list-item-title v-text="customer.name"></v-list-item-title>
-      <v-list-item-subtitle v-text="customer.balance"></v-list-item-subtitle>
-    </v-list-item-content>
-
-    <v-list-item-action>
-      <v-btn icon @click="removeCustomer">
-        <v-icon color="grey lighten-1">mdi-file-remove</v-icon>
-      </v-btn>
-    </v-list-item-action>
-  </v-list-item>
-</template>
-
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
 import { ICustomer } from '../models';
@@ -38,5 +19,26 @@ export default class CustomerComponent extends Vue {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
+
+<template>
+  <div>
+    <v-list-item @click="editCustomer">
+      <v-list-item-avatar>
+        <v-img :src="customer.avatar || '/avatar.png'"></v-img>
+      </v-list-item-avatar>
+
+      <v-list-item-content>
+        <v-list-item-title v-text="customer.name"></v-list-item-title>
+        <v-list-item-subtitle v-text="customer.balance"></v-list-item-subtitle>
+      </v-list-item-content>
+
+      <!-- <v-list-item-action>
+      <v-btn icon @click="removeCustomer">
+        <v-icon color="grey lighten-1">mdi-file-remove</v-icon>
+      </v-btn>
+    </v-list-item-action> -->
+    </v-list-item>
+    <v-divider :inset="false"></v-divider>
+  </div>
+</template>

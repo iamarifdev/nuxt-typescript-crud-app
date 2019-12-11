@@ -1,50 +1,3 @@
-<template>
-  <v-dialog v-model="dialog" max-width="350px" @click:outside="close">
-    <v-card>
-      <v-card-title>Edit Customer</v-card-title>
-      <v-card-subtitle>Customer</v-card-subtitle>
-      <v-form id="customerAddForm" ref="form" v-model="isFormValid" lazy-validation @submit.prevent="update($event)">
-        <v-container>
-          <input type="hidden" v-model="model._id" />
-          <v-text-field
-            dense
-            outlined
-            v-model="model.name"
-            :counter="55"
-            :rules="rules.name"
-            label="Customer Name"
-            required
-          >
-          </v-text-field>
-          <v-text-field
-            dense
-            outlined
-            v-model="model.email"
-            :rules="rules.email"
-            label="E-mail"
-            required
-          ></v-text-field>
-          <v-text-field
-            type="number"
-            dense
-            outlined
-            v-model="model.balance"
-            :rules="rules.balance"
-            label="Balance"
-            hint="Add a positive value"
-            required
-          ></v-text-field>
-        </v-container>
-      </v-form>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="red" text @click="close">Close</v-btn>
-        <v-btn type="submit" form="customerAddForm" color="green darken" :disabled="!isFormValid">Submit</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
-</template>
-
 <script lang="ts">
 import { Vue, Component, Prop, Emit, Ref, Model } from 'vue-property-decorator';
 import { ICustomer } from '../models';
@@ -107,3 +60,50 @@ export default class CustomerEditComponent extends Vue {
 </script>
 
 <style scoped></style>
+
+<template>
+  <v-dialog v-model="dialog" max-width="350px" @click:outside="close">
+    <v-card>
+      <v-card-title class="success white--text">Edit Customer</v-card-title>
+      <v-card-subtitle class="success white--text">Customer</v-card-subtitle>
+      <v-form id="customerAddForm" ref="form" v-model="isFormValid" lazy-validation @submit.prevent="update($event)">
+        <v-container>
+          <input type="hidden" v-model="model._id" />
+          <v-text-field
+            dense
+            outlined
+            v-model="model.name"
+            :counter="55"
+            :rules="rules.name"
+            label="Customer Name"
+            required
+          >
+          </v-text-field>
+          <v-text-field
+            dense
+            outlined
+            v-model="model.email"
+            :rules="rules.email"
+            label="E-mail"
+            required
+          ></v-text-field>
+          <v-text-field
+            type="number"
+            dense
+            outlined
+            v-model="model.balance"
+            :rules="rules.balance"
+            label="Balance"
+            hint="Add a positive value"
+            required
+          ></v-text-field>
+        </v-container>
+      </v-form>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="red" text @click="close">Close</v-btn>
+        <v-btn type="submit" form="customerAddForm" color="green darken" :disabled="!isFormValid">Submit</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+</template>

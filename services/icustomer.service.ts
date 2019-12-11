@@ -1,8 +1,8 @@
 import { Observable } from 'rxjs';
-import { ICustomer } from '../models';
+import { ICustomer, Pagination } from '../models';
 
 export interface ICustomerService {
-  getAllCustomer(): Observable<ICustomer[]>;
+  getAllCustomer(params: Pagination): Observable<ICustomer[]>;
   addNewCustomer(payload: any): Observable<ICustomer | null>;
   updateCustomer(payload: any, customerId: string): Observable<ICustomer | null>;
 }
