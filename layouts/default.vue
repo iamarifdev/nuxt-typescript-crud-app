@@ -61,14 +61,11 @@
       />
       <v-spacer />
       <v-btn icon>
-        <v-icon>mdi-apps</v-icon>
-      </v-btn>
-      <v-btn icon>
         <v-icon>mdi-bell</v-icon>
       </v-btn>
       <v-btn icon large>
         <v-avatar size="32px" item>
-          <v-img src="https://cdn.vuetifyjs.com/images/logos/logo.svg" alt="Vuetify" />
+          <v-img src="/avatar.png" alt="avatar" />
         </v-avatar>
       </v-btn>
     </v-app-bar>

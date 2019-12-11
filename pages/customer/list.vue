@@ -16,7 +16,7 @@ import { ICustomer, Pagination, IPaginatedList } from '../../models';
     CustomerEdit
   }
 })
-export default class Home extends Vue {
+export default class CustomerListPage extends Vue {
   @inject('ILoadingService') private asyncService!: ILoadingService;
   @inject('ICustomerService') private customerService!: ICustomerService;
 
