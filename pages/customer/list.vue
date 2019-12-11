@@ -7,7 +7,7 @@ import CustomerAdd from '~/components/CustomerAdd.vue';
 import CustomerEdit from '~/components/CustomerEdit.vue';
 
 import { ICustomerService, ILoadingService } from '../../services';
-import { ICustomer, Pagination } from '../../models';
+import { ICustomer, Pagination, IPaginatedList } from '../../models';
 
 @Component({
   components: {
@@ -23,6 +23,7 @@ export default class Home extends Vue {
   public pagination: Pagination;
   public scrollAtBottom: boolean = false;
   public isLoading: boolean = false;
+  public customerCount: number = 0;
   public customers: ICustomer[] = [];
   public addDialog: boolean = false;
   public editDialog: boolean = false;
@@ -54,11 +55,14 @@ export default class Home extends Vue {
   }
 
   public loadPaginatedCustomer(): void {
+    if (this.customers.length && this.customers.length >= this.customerCount) return;
     this.asyncService.start();
     this.pagination.page = ++this.pagination.page;
-    this.customerService.getAllCustomer(this.pagination).subscribe((customers: ICustomer[]) => {
+    this.customerService.getPaginatedCustomer(this.pagination).subscribe((customerList: IPaginatedList<ICustomer>) => {
       this.asyncService.finish();
-      this.customers = this.customers.concat(customers);
+      const { items = [], count = 0 } = customerList;
+      this.customers = this.customers.concat(items);
+      this.customerCount = count;
     });
   }
 
