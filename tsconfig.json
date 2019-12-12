@@ -12,6 +12,8 @@
     "declaration": true,
     "removeComments": true,
     // "strict": true,
+    "noEmitHelpers": false,
+    "importHelpers": true,
     "noEmit": true,
     "baseUrl": ".",
     "paths": {

@@ -30,7 +30,7 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['~/plugins/build-di-container.plugin'],
+  plugins: ['~/plugins/build-di-container.plugin', { src: '~/plugins/persist-state.plugin', ssr: false }],
   /*
    ** Nuxt.js dev-modules
    */

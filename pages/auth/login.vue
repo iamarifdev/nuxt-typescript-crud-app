@@ -1,7 +1,9 @@
 <script lang="ts">
-import { Vue, Component, Prop, Emit, Ref, Model } from 'vue-property-decorator';
+import { Vue, Component, Prop, Ref, Model } from 'vue-property-decorator';
+import { getModule } from 'vuex-module-decorators';
 import { inject } from 'inversify-props';
 
+import { Authentication } from '~/store/modules';
 import { ILoadingService } from '../../services';
 
 @Component({
@@ -11,41 +13,36 @@ export default class LoginPage extends Vue {
   @inject('ILoadingService') private loadingService!: ILoadingService;
   @Ref('form') readonly form!: HTMLFormElement;
 
+  public authModule: Authentication;
   public isLoading: boolean = false;
-  public customer = {
-    name: '',
+  public login = {
     email: '',
-    balance: ''
+    password: ''
   };
   public isFormValid: boolean = false;
   public rules = {
-    name: [
-      (v: any) => !!v || 'Name is required',
-      (v: any) => (v && v.length <= 55) || 'Name must be less than 10 characters'
-    ],
     email: [(v: any) => !!v || 'E-mail is required', (v: any) => /.+@.+\..+/.test(v) || 'E-mail must be valid'],
-    balance: [(v: any) => !!v || 'Balance is required', (v: any) => (v && v >= 0) || 'Balance must be postive integer']
+    password: [(v: any) => !!v || 'Password is required']
   };
 
-  public mounted() {
+  public created(): void {
+    this.authModule = getModule(Authentication, this.$store);
+  }
+
+  public mounted(): void {
     this.loadingService.$isLoading.subscribe(loading => (this.isLoading = loading));
+    console.log('store', this.$store.state);
   }
 
-  @Emit()
-  public add(event: any) {
+  public authenticate(event: any) {
     const form = this.$refs.form as any;
-    let customer = { ...this.customer, balance: Number(this.customer.balance) };
     if (form.validate()) {
-      this.close();
-      return customer;
+      this.authModule.login({
+        email: this.login.email,
+        token: 'login user token need to be generated'
+      });
+      this.$router.push({ path: '/customer/list' });
     }
-  }
-
-  @Emit()
-  public close(): boolean {
-    this.form && this.form.reset();
-    // this.dialog = false;
-    return true;
   }
 
   // public destroyed() {
@@ -57,47 +54,35 @@ export default class LoginPage extends Vue {
 <style scoped></style>
 
 <template>
-  <v-card  :loading="isLoading">
-    <v-card-title class="success white--text">Add new</v-card-title>
-    <v-card-subtitle class="success white--text">Customer</v-card-subtitle>
-    <v-form id="customerAddForm" ref="form" v-model="isFormValid" lazy-validation @submit.prevent="add($event)">
+  <v-form ref="form" v-model="isFormValid" lazy-validation @submit.prevent="authenticate($event)">
+    <v-card :loading="isLoading" width="300">
+      <v-card-title>Authentication</v-card-title>
+      <v-card-subtitle>Enter your valid credentials</v-card-subtitle>
+      <v-divider :inset="false"></v-divider>
       <v-container>
         <v-text-field
           dense
           outlined
-          v-model="customer.name"
-          :counter="55"
-          :rules="rules.name"
-          label="Customer Name"
+          v-model="login.email"
+          :rules="rules.email"
+          label="E-mail"
+          placeholder="E-mail"
+          required
+        ></v-text-field>
+        <v-text-field
+          dense
+          outlined
+          v-model="login.password"
+          :rules="rules.password"
+          label="Password"
+          placeholder="Password"
           required
         >
         </v-text-field>
-        <v-text-field
-          dense
-          outlined
-          v-model="customer.email"
-          :rules="rules.email"
-          label="E-mail"
-          required
-        ></v-text-field>
-        <v-text-field
-          type="number"
-          dense
-          outlined
-          v-model="customer.balance"
-          :rules="rules.balance"
-          label="Balance"
-          hint="Add a positive value"
-          required
-        ></v-text-field>
+        <v-btn block type="submit" color="success" :disabled="!isFormValid || isLoading">
+          Login
+        </v-btn>
       </v-container>
-    </v-form>
-    <v-card-actions>
-      <v-spacer></v-spacer>
-      <v-btn color="red" text @click="close">Close</v-btn>
-      <v-btn type="submit" form="customerAddForm" color="green darken" :disabled="!isFormValid || isLoading">
-        Submit
-      </v-btn>
-    </v-card-actions>
-  </v-card>
+    </v-card>
+  </v-form>
 </template>

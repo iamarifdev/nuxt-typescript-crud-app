@@ -14,7 +14,8 @@ import { ICustomer, Pagination, IPaginatedList } from '../../models';
     CustomerList,
     CustomerAdd,
     CustomerEdit
-  }
+  },
+  middleware: 'authenticated'
 })
 export default class CustomerListPage extends Vue {
   @inject('ILoadingService') private asyncService!: ILoadingService;
