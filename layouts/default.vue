@@ -63,11 +63,34 @@
       <v-btn icon>
         <v-icon>mdi-bell</v-icon>
       </v-btn>
-      <v-btn icon large>
+
+      <v-menu bottom origin="center center" transition="scale-x-transition">
+        <template v-slot:activator="{ on }">
+          <v-btn icon large v-on="on">
+            <v-avatar size="32px" item>
+              <v-img src="/avatar.png" alt="avatar" />
+            </v-avatar>
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item @click="logout">
+            <v-list-item-title>Profile</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="logout">
+            <v-list-item-title>Account Settings</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="logout">
+            <v-list-item-title>Logout</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+
+      <!-- <v-btn icon large>
         <v-avatar size="32px" item>
           <v-img src="/avatar.png" alt="avatar" />
         </v-avatar>
-      </v-btn>
+      </v-btn> -->
     </v-app-bar>
     <v-content>
       <v-container class="container container--fluid">
@@ -80,38 +103,50 @@
   </v-app>
 </template>
 
-<script>
-export default {
-  props: {
-    source: String
-  },
-  data: () => ({
-    appName: 'CRUD Application',
-    drawer: null,
-    items: [
-      { icon: 'mdi-home', text: 'Home', to: '/' },
-      { icon: 'mdi-account-multiple', text: 'Customers', to: '/customer/list' }
-      // {
-      //   icon: 'mdi-chevron-up',
-      //   'icon-alt': 'mdi-chevron-down',
-      //   text: 'Labels',
-      //   model: true,
-      //   children: [{ icon: 'mdi-plus', text: 'Create label' }]
-      // },
-      // {
-      //   icon: 'mdi-chevron-up',
-      //   'icon-alt': 'mdi-chevron-down',
-      //   text: 'More',
-      //   model: false,
-      //   children: [
-      //     { text: 'Import' },
-      //     { text: 'Export' },
-      //     { text: 'Print' },
-      //     { text: 'Undo changes' },
-      //     { text: 'Other contacts' }
-      //   ]
-      // },
-    ]
-  })
-};
+<script lang="ts">
+import { Vue, Component, Prop } from 'vue-property-decorator';
+import { getModule } from 'vuex-module-decorators';
+import { AuthenticationModule } from '~/store/modules';
+
+@Component
+export default class Default extends Vue {
+  @Prop({ type: String }) readonly source!: string;
+  public authModule: AuthenticationModule;
+
+  public appName: string = 'CRUD Application';
+  public drawer = null;
+  public items = [
+    { icon: 'mdi-home', text: 'Home', to: '/' },
+    { icon: 'mdi-account-multiple', text: 'Customers', to: '/customer/list' }
+    // {
+    //   icon: 'mdi-chevron-up',
+    //   'icon-alt': 'mdi-chevron-down',
+    //   text: 'Labels',
+    //   model: true,
+    //   children: [{ icon: 'mdi-plus', text: 'Create label' }]
+    // },
+    // {
+    //   icon: 'mdi-chevron-up',
+    //   'icon-alt': 'mdi-chevron-down',
+    //   text: 'More',
+    //   model: false,
+    //   children: [
+    //     { text: 'Import' },
+    //     { text: 'Export' },
+    //     { text: 'Print' },
+    //     { text: 'Undo changes' },
+    //     { text: 'Other contacts' }
+    //   ]
+    // },
+  ];
+
+  public created(): void {
+    this.authModule = getModule(AuthenticationModule, this.$store);
+  }
+
+  public logout(): void {
+    this.authModule.logout();
+    this.$router.push('/auth/login');
+  }
+}
 </script>
