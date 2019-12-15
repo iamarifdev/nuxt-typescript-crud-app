@@ -74,10 +74,10 @@
         </template>
 
         <v-list>
-          <v-list-item @click="logout">
+          <v-list-item>
             <v-list-item-title>Profile</v-list-item-title>
           </v-list-item>
-          <v-list-item @click="logout">
+          <v-list-item>
             <v-list-item-title>Account Settings</v-list-item-title>
           </v-list-item>
           <v-list-item @click="logout">

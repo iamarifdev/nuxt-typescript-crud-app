@@ -8,7 +8,7 @@
     "dev": "HOST=0.0.0.0 nuxt-ts --port 3001",
     "build": "nuxt-ts build",
     "generate": "nuxt-ts generate",
-    "start": "nuxt-ts start --port 3001",
+    "start": "HOST=0.0.0.0 nuxt-ts start --port 3002",
     "test": "jest"
   },
   "dependencies": {
