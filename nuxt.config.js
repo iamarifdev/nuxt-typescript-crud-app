@@ -30,7 +30,10 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['~/plugins/build-di-container.plugin', { src: '~/plugins/persist-state.plugin', ssr: false }],
+  plugins: [
+    '~/plugins/build-di-container.plugin',
+    { src: '~/plugins/persist-state.plugin' }
+  ],
   /*
    ** Nuxt.js dev-modules
    */
@@ -64,9 +67,7 @@ export default {
    ** Build configuration
    */
   build: {
-    /*
-     ** You can extend webpack config here
-     */
+    transpile: [/nuxt-typed-vuex/],
     extend(config, ctx) {}
   }
 };

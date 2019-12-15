@@ -3,17 +3,18 @@ import { Vue, Component, Prop, Ref, Model } from 'vue-property-decorator';
 import { getModule } from 'vuex-module-decorators';
 import { inject } from 'inversify-props';
 
-import { Authentication } from '~/store/modules';
+import { AuthenticationModule } from '../../store/modules';
 import { ILoadingService } from '../../services';
 
 @Component({
-  layout: 'auth'
+  layout: 'auth',
+  middleware: 'anonymous'
 })
 export default class LoginPage extends Vue {
   @inject('ILoadingService') private loadingService!: ILoadingService;
   @Ref('form') readonly form!: HTMLFormElement;
 
-  public authModule: Authentication;
+  public authModule: AuthenticationModule;
   public isLoading: boolean = false;
   public login = {
     email: '',
@@ -26,7 +27,7 @@ export default class LoginPage extends Vue {
   };
 
   public created(): void {
-    this.authModule = getModule(Authentication, this.$store);
+    this.authModule = getModule(AuthenticationModule, this.$store);
   }
 
   public mounted(): void {
@@ -37,6 +38,14 @@ export default class LoginPage extends Vue {
   public authenticate(event: any) {
     const form = this.$refs.form as any;
     if (form.validate()) {
+      // this.$accessor.authentication.login({
+      //     email: this.login.email,
+      //     token: 'login user token need to be generated'
+      // });
+      // this.$store.commit('setAuthUser', {
+      //   email: this.login.email,
+      //   token: 'login user token need to be generated'
+      // });
       this.authModule.login({
         email: this.login.email,
         token: 'login user token need to be generated'
